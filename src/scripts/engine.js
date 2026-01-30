@@ -46,7 +46,7 @@ const cardData = [
     id: 2,
     name: "Exodia",
     type: "Scissors",
-    img: `${pathImages}exodia.png}`,
+    img: `${pathImages}exodia.png`,
     winOf: 0,
     loseOf: 1,
   },
@@ -65,16 +65,22 @@ async function createCardImage(idCard, fieldSide) {
   cardImage.classList.add("card");
 
   if (fieldSide === playerSides.player1) {
+    cardImage.addEventListener("mouseover", () => {
+      drawSelectCard(idCard);
+    });
+
     cardImage.addEventListener("click", () => {
       setCardsField(cardImage.getAttribute("data-id"));
     });
   }
 
-  cardImage.addEventListener("mouseover", () => {
-    drawSelectCard(idCard);
-  });
-
   return cardImage;
+}
+
+async function drawSelectCard(index) {
+  state.cardSprites.avatar.src = cardData[index].img;
+  state.cardSprites.name.innerText = cardData[index].name;
+  state.cardSprites.type.innerText = "Attribute: " + cardData[index].type;
 }
 
 async function drawCards(cardNumbers, fieldSide) {
