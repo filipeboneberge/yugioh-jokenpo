@@ -37,24 +37,24 @@ const cardData = [
     name: "Blue Eyes White Dragon",
     type: "Paper",
     img: `${pathImages}dragon.png`,
-    winOf: 1,
-    loseOf: 2,
+    winOf: [1],
+    loseOf: [2],
   },
   {
     id: 1,
     name: "Dark Magician",
     type: "Rock",
     img: `${pathImages}magician.png`,
-    winOf: 2,
-    loseOf: 0,
+    winOf: [2],
+    loseOf: [0],
   },
   {
     id: 2,
     name: "Exodia",
     type: "Scissors",
     img: `${pathImages}exodia.png`,
-    winOf: 0,
-    loseOf: 1,
+    winOf: [0],
+    loseOf: [1],
   },
 ];
 
@@ -94,10 +94,38 @@ async function setCardsField(cardId) {
   state.fieldCards.player.src = cardData[cardId].img;
   state.fieldCards.computer.src = cardData[computerCardId].img;
 
-  // let duelResults = await checkDuelResults(cardId, computerCardId);
+  let duelResults = await checkDuelResults(cardId, computerCardId);
 
-  // // await updateScore();
-  // // await drawButton(duelResults);
+  await updateScore();
+  await drawButton(duelResults);
+}
+
+async function updateScore() {
+  state.score.scoreBox.innerText = `Win : ${state.score.playerScore} Lose: ${state.score.computerScore}`;
+}
+
+async function drawButton(text) {
+  state.actions.button.innerText = text.toUpperCase();
+  state.actions.button.style.display = "block";
+}
+
+async function checkDuelResults(playerCardId, ComputerCardId) {
+  let duelResults = "draw";
+  let playerCard = cardData[playerCardId];
+
+  if (playerCard.winOf.includes(ComputerCardId)) {
+    duelResults = "win";
+    state.score.playerScore++;
+  }
+
+  if (playerCard.loseOf.includes(ComputerCardId)) {
+    duelResults = "lose";
+    state.score.computerScore++;
+  }
+
+  await playAudio(duelResults);
+
+  return duelResults;
 }
 
 async function removeAllCardsImages() {
@@ -122,6 +150,19 @@ async function drawCards(cardNumbers, fieldSide) {
     const cardImage = await createCardImage(randomIdCard, fieldSide);
     document.getElementById(fieldSide).appendChild(cardImage);
   }
+}
+async function resetDuel() {
+  state.cardSprites.avatar.src = "";
+  state.fieldCards.player.style.display = "none";
+  state.fieldCards.computer.style.display = "none";
+  state.actions.button.style.display = "none";
+
+  init();
+}
+
+async function playAudio(status) {
+  const audio = new Audio(`./src/assets/audios/${status}.wav`);
+  audio.play();
 }
 
 function init() {
