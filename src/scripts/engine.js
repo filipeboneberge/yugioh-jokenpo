@@ -190,6 +190,10 @@ function init() {
 
   drawCards(5, playerSides.player1);
   drawCards(5, playerSides.computer);
+
+  const bgm = document.getElementById("bgm");
+  bgm.play();
+  bgm.volume = 0.5;
 }
 
 init();
